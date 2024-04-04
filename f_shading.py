@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import random
 
+# Function that performs the Bresenham Algorithm between two points 
+# and returns all the points of the line connecting them
+#
+# Input: 
 def bresenham_line(start, end):
     edges = []
     x1, y1 = start
@@ -40,8 +44,6 @@ def f_shading(img, vertices, vcolors):
 
     ymin = min(vertices[0][1], vertices[1][1], vertices[2][1])
     ymax = max(vertices[0][1], vertices[1][1], vertices[2][1])
-    xmin = min(vertices[0][0], vertices[1][0], vertices[2][0])
-    xmax = max(vertices[0][0], vertices[1][0], vertices[2][0])
 
     # Find edges of triangle using Bresenham Algorithm and sort them based on y
     active_edges = []
