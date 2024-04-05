@@ -38,7 +38,6 @@ def vector_interp(p1, p2, V1, V2, coord, dim):
 
     # Interpolate the value based on the specified dimension
     V = (1 - t) * V1 + t * V2
-    print(f'Interpolation parameter: {t}')
     return V
 
 # Example usage:
