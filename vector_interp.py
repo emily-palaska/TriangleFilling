@@ -16,29 +16,17 @@ def vector_interp(p1, p2, V1, V2, coord, dim):
     # Handle exception: vertical or horizontal line with invalid arguments
     if (p1[0] == p2[0] and dim == 1) or (p1[1] == p2[1] and dim == 2) :
         return None
-            
-    # Find cooordinates of p
-    p = [0, 0]
+
+    # Calculate the interpolation parameter t
     if dim == 1:
-        p[0] = coord
-        p[1] = p1[1] + (p[0] - p1[0])*(p2[1] - p1[1])/(p2[0] - p1[0])
+        t = (coord - p1[0]) / (p2[0] - p1[0])
     elif dim == 2:
-        p[1] = coord
-        p[0] = p1[0] + (p[1] - p1[1])*(p2[0] - p1[0])/(p2[1] - p1[1])
+        t = (coord - p1[1]) / (p2[1] - p1[1])
     else:
         raise ValueError("Invalid dimension. dim should be 1 or 2.")
     
-    # Calculate the distance between p1 and p along the line
-    dist_p1_p = ((p[0] - p1[0])**2 + (p[1] - p1[1])**2)**0.5
-    # Calculate the distance between p1 and p2
-    dist_p1_p2 = ((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2)**0.5
-
-    # Calculate the interpolation parameter t
-    t = dist_p1_p / dist_p1_p2
-
-    # Interpolate the value based on the specified dimension
-    V = (1 - t) * V1 + t * V2
-    return V
+    # Interpolate the value
+    return (1 - t) * V1 + t * V2
 
 # Example usage:
 #p1 = (0, 0)
@@ -47,6 +35,5 @@ def vector_interp(p1, p2, V1, V2, coord, dim):
 #V2 = 100
 #coord = -10
 #dim = 2
-
 #result = vector_interp(p1, p2, V1, V2, coord, dim)
 #print("Interpolated value:", result)

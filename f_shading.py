@@ -35,12 +35,13 @@ def bresenham_line(start, end):
     return pixels
 
 # Function that fills a given triangle with the flat shading technique
-# Given that the algorithm only handles triangles, non-convex polygons are not considered in the implentations
+# Given that the algorithm only handles triangles, non-convex polygons are not considered in the implentation
 #
 # Input:
 #   img: the given canvas with pre-existing shapes
 #   vertices: the three points defining the triangle to be shaded
 #   vcolors: the colors od the three vertices
+#
 # Output:
 #   update_img: the new canvas with the filled triangle
 def f_shading(img, vertices, vcolors):
@@ -49,15 +50,11 @@ def f_shading(img, vertices, vcolors):
     for i in range(3):
         flat_color[i] = (vcolors[0][i] + vcolors[1][i] + vcolors[2][i]) / 3
 
-    # Extract the dimensions of the image
-    M = len(img)
-    N = len(img[0])
-
     # Calculate the y scanning range
     ymin = min(vertices[0][1], vertices[1][1], vertices[2][1])
     ymax = max(vertices[0][1], vertices[1][1], vertices[2][1])
 
-    # Find the edges of the triangle using Bresenham Algorithm on every combination of vertices
+    # Find the edges of the triangle using the Bresenham Algorithm on every combination of vertices
     active_edges = []
     for i in range(3):
         start = vertices[i % 3]
@@ -67,7 +64,7 @@ def f_shading(img, vertices, vcolors):
     # Sort the edges' pixels firstly by y and then by x
     active_edges = sorted(active_edges, key=lambda coord: (coord[1], coord[0]))
 
-    # Scann all the y lines in the calculates range
+    # Scann all the y lines in the calculated range
     updated_img = img
     for y in range(ymin, ymax, 1):
         # Move all the points with the same y into the current edges list
@@ -77,32 +74,34 @@ def f_shading(img, vertices, vcolors):
             updated_img[x][y] = flat_color
             current_edges.append(x)
 
-        # Based on the number of current edges, fill either only one or all the pixels between them
+        # Skip for the vertex scanning line
         if len(current_edges) == 1:
             x = current_edges[0]
             updated_img[x][y] = flat_color
-        else:
-            for x in range(current_edges[0], current_edges[-1]):
-                updated_img[x][y] = flat_color
+            continue
+        
+        # Fill all the pixels in the x scanning range
+        for x in range(current_edges[0], current_edges[-1], 1):
+            updated_img[x][y] = flat_color
     return updated_img
 
 # Example usage
-M = 100
-N = 100
-img = [[[0.99 for i in range(3)] for i in range(N)] for k in range(M)]
+#M = 100
+#N = 100
+#img = [[[0.99 for i in range(3)] for i in range(N)] for k in range(M)]
 #vertices = [[0, 0], [999, 999], [0, 999]]
 # vcolors = [[0.9, 0, 0], [0.9, 0, 0], [0.9, 0, 0]]
 
 # Randomize vertices and colors
-vertices = []
-vcolors = []
-for i in range(3):
-  vertices.append([random.randint(0, M - 1), random.randint(0, N - 1)])
-  vcolors.append([random.randint(0, 99) / 100, random.randint(0, 99) / 100, random.randint(0, 99) / 100])
+#vertices = []
+#vcolors = []
+#for i in range(3):
+  #vertices.append([random.randint(0, M - 1), random.randint(0, N - 1)])
+  #vcolors.append([random.randint(0, 99) / 100, random.randint(0, 99) / 100, random.randint(0, 99) / 100])
 
 # Perform flat shading function
-img = f_shading(img, vertices, vcolors)
+#img = f_shading(img, vertices, vcolors)
 
 # Show results
-plt.imshow(img)
-plt.show()
+#plt.imshow(img)
+#plt.show()
