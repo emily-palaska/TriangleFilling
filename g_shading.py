@@ -1,6 +1,6 @@
+import random
 import numpy as np
 import matplotlib.pyplot as plt
-import random
 from vector_interp import vector_interp
 
 # Function that performs the Bresenham Algorithm between two points 
@@ -98,19 +98,19 @@ def g_shading(img, vertices, vcolors):
     return updated_img
 
 # Example usage
-M = 1000
-N = 1000
-img = np.full((M, N, 3), 0.99)
+#M = 1000
+#N = 1000
+#img = np.full((M, N, 3), 0.99)
 #vertices = [[90, 52], [23, 66], [28, 38]]
 #vcolors = [[0.83, 0.93, 0.25], [0.33, 0.8, 0.61], [0.03, 0.73, 0.6]]
 
 # Randomize vertices and colors
-vertices = np.array([[random.randint(0, M - 1), random.randint(0, N - 1)] for i in range(3)])
-vcolors = np.array([[random.randint(0, 99) / 100 for i in range(3)] for j in range(3)])
+#vertices = np.array([[random.randint(0, M - 1), random.randint(0, N - 1)] for i in range(3)])
+#vcolors = np.array([[random.randint(0, 99) / 100 for i in range(3)] for j in range(3)])
 
 # Perform the gouraud shading function
-img = g_shading(img, vertices, vcolors)
+#img = g_shading(img, vertices, vcolors)
 
 # Show results
-plt.imshow(img)
-plt.show()
+#plt.imshow(img)
+#plt.show()
