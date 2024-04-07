@@ -59,11 +59,12 @@ def g_shading(img, vertices, vcolors):
     # Color in the edges and vertices
     for i in range(3):
         j = (i + 1) % 3
-        for x, y in edges[i]:
-            # Handle excption of vertical line
-            if x == vertices[i][0]:
+        # Handle excption of vertical line
+        if vertices[i][0] == vertices[j][0]:
+            for x, y in edges[i]:
                 updated_img[x][y] = [vector_interp(vertices[i], vertices[j], vcolors[i][c], vcolors[j][c], y, 2) for c in range(3)]
-            else:
+        else:
+            for x, y in edges[i]:
                 updated_img[x][y] = [vector_interp(vertices[i], vertices[j], vcolors[i][c], vcolors[j][c], x, 1) for c in range(3)]
         updated_img[vertices[i][0]][vertices[i][1]] = vcolors[i]  
     
