@@ -11,7 +11,6 @@
 #
 # Output:
 #    V: the result of the interpolation (vector value) at point p
-
 def vector_interp(p1, p2, V1, V2, coord, dim):
     # Handle exception: vertical or horizontal line with invalid arguments
     if (p1[0] == p2[0] and dim == 1) or (p1[1] == p2[1] and dim == 2) :
@@ -27,13 +26,3 @@ def vector_interp(p1, p2, V1, V2, coord, dim):
     
     # Interpolate the value
     return (1 - t) * V1 + t * V2
-
-# Example usage:
-#p1 = (0, 0)
-#p2 = (10, 10)
-#V1 = 0
-#V2 = 100
-#coord = -10
-#dim = 2
-#result = vector_interp(p1, p2, V1, V2, coord, dim)
-#print("Interpolated value:", result)
