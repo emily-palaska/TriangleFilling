@@ -50,7 +50,7 @@ def g_shading(img, vertices, vcolors):
     # Calculate the y scanning range
     ymin, ymax = np.min(vertices[:, 1]), np.max(vertices[:, 1])
     
-    # Initialize the result image and border colors for each y line
+    # Initialize the result image
     updated_img = img.copy()   
     
     # Find the edges of the triangle using the Bresenham Algorithm on every combination of vertices
