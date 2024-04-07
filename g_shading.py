@@ -48,61 +48,53 @@ def bresenham_line(start, end):
 #   update_img: the new canvas with the filled triangle
 def g_shading(img, vertices, vcolors):    
     # Calculate the y scanning range
-    ymin = np.min(vertices[:, 1])
-    ymax = np.max(vertices[:, 1])
-    
-    # Find the edges of the triangle using the Bresenham Algorithm on every combination of vertices
-    active_edges = bresenham_line(vertices[0, :], vertices[1, :])
-    active_edges = np.concatenate([active_edges, bresenham_line(vertices[1, :], vertices[2,:])])
-    active_edges = np.concatenate([active_edges, bresenham_line(vertices[2, :], vertices[0,:])])
-
-    # Sort the vertices and edges firstly by y and then by x
-    active_edges = active_edges[np.lexsort((active_edges[:, 0], active_edges[:, 1]))]
-    sorted_vertices_indexes = np.lexsort((vertices[:, 0], vertices[:, 1]))
-    vertices = vertices[sorted_vertices_indexes]
-    vcolors = vcolors[sorted_vertices_indexes]
+    ymin, ymax = np.min(vertices[:, 1]), np.max(vertices[:, 1])
     
     # Initialize the result image and border colors for each y line
-    updated_img = img.copy()
-    border_colors = np.zeros((2, 3))
+    updated_img = img.copy()   
     
-    # Color in the vertices
+    # Find the edges of the triangle using the Bresenham Algorithm on every combination of vertices
+    edges = [bresenham_line(vertices[i], vertices[(i + 1) % 3]) for i in range(3)]
+
+    # Color in the edges and vertices
     for i in range(3):
-        [x, y] = vertices[i]
-        updated_img[x, y] = vcolors[i]   
+        j = (i + 1) % 3
+        for x, y in edges[i]:
+            # Handle excption of vertical line
+            if x == vertices[i][0]:
+                updated_img[x][y] = [vector_interp(vertices[i], vertices[j], vcolors[i][c], vcolors[j][c], y, 2) for c in range(3)]
+            else:
+                updated_img[x][y] = [vector_interp(vertices[i], vertices[j], vcolors[i][c], vcolors[j][c], x, 1) for c in range(3)]
+        updated_img[vertices[i][0]][vertices[i][1]] = vcolors[i]  
+    
+    # Sort the vertices and edges firstly by y
+    active_edges = np.concatenate(edges)
+    active_edges = active_edges[np.argsort(active_edges[:, 1])]
     
     # Scan all the y lines in the calculated range
-    for y in range(ymin, ymax, 1):
+    for y in range(ymin, ymax):
         # Move all the points with the same y into the current edges list
         current_edges = active_edges[active_edges[:, 1] == y][:, 0]
         
-        # Skip the lines with only one vertex point
+        # Skip the lines with only one point (vertex)
         if len(current_edges) <= 1:
             continue
         
-        # Find the two border clors of the scanning line (left on position 0 and right on position 1)
-        order = [0, 1] if vertices[1][0] < vertices[2][0] else [1, 0]
-        
-        # Decide the points to interpolate based on y
-        if y < vertices[1][1]:
-            border_colors[order[0]] = [vector_interp(vertices[0], vertices[1], vcolors[0][c], vcolors[1][c], y, 2) for c in range(3)]
-        else:
-            border_colors[order[0]] = [vector_interp(vertices[1], vertices[2], vcolors[1][c], vcolors[2][c], y, 2) for c in range(3)]           
-        border_colors[order[1]] = [vector_interp(vertices[0], vertices[2], vcolors[0][c], vcolors[2][c], y, 2) for c in range(3)]        
-        
-        # For each pixel in the x scanning range, find the final gouraud color from interpolation
+        # Color in every pixel in the x scanning line using interpolation
         xmin, xmax = np.min(current_edges), np.max(current_edges)
-        for x in range(xmin, xmax, 1):
-            gouraud_color = [vector_interp([xmin, y], [xmax, y], border_colors[0][c], border_colors[1][c], x, 1) for c in range(3)]
+        V1 = updated_img[xmin, y]
+        V2 = updated_img[xmax, y]
+        for x in range(xmin, xmax):
+            gouraud_color = [vector_interp([xmin, y], [xmax, y], V1[c], V2[c], x, 1) for c in range(3)]
             updated_img[x][y] = gouraud_color
     return updated_img
 
 # Example usage
-#M = 1000
-#N = 1000
+#M = 100
+#N = 100
 #img = np.full((M, N, 3), 0.99)
-#vertices = [[90, 52], [23, 66], [28, 38]]
-#vcolors = [[0.83, 0.93, 0.25], [0.33, 0.8, 0.61], [0.03, 0.73, 0.6]]
+#vertices = np.array([[0, N - 1], [M - 1, 0], [M - 1, N - 1]])
+#vcolors = np.array([[0.99, 0, 0], [0, 0.99, 0], [0, 0, 0.99]])
 
 # Randomize vertices and colors
 #vertices = np.array([[random.randint(0, M - 1), random.randint(0, N - 1)] for i in range(3)])

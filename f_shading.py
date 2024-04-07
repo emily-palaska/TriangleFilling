@@ -1,5 +1,4 @@
-import matplotlib.pyplot as plt
-import random
+import numpy as np
 
 # Function that performs the Bresenham Algorithm between two points 
 #
@@ -32,7 +31,7 @@ def bresenham_line(start, end):
         if e2 < dx:
             err += dx
             y1 += sy
-    return pixels
+    return np.array(pixels)
 
 # Function that fills a given triangle with the flat shading technique
 # Given that the algorithm only handles triangles, non-convex polygons are not considered in the implentation
@@ -46,49 +45,43 @@ def bresenham_line(start, end):
 #   update_img: the new canvas with the filled triangle
 def f_shading(img, vertices, vcolors):
     # Calculate the flat color as the vector mean of the vertices' colors
-    flat_color = [0, 0, 0]
-    for i in range(3):
-        flat_color[i] = (vcolors[0][i] + vcolors[1][i] + vcolors[2][i]) / 3
+    flat_color = np.mean(vcolors, axis = 0)
 
     # Calculate the y scanning range
-    ymin = min(vertices[0][1], vertices[1][1], vertices[2][1])
-    ymax = max(vertices[0][1], vertices[1][1], vertices[2][1])
+    ymin, ymax = np.min(vertices[:, 1]), np.max(vertices[:, 1])
 
     # Find the edges of the triangle using the Bresenham Algorithm on every combination of vertices
-    active_edges = []
-    for i in range(3):
-        start = vertices[i % 3]
-        end = vertices[(i + 1) % 3]
-        active_edges += bresenham_line(start, end)
+    active_edges = bresenham_line(vertices[0, :], vertices[1, :])
+    active_edges = np.concatenate([active_edges, bresenham_line(vertices[1, :], vertices[2,:])])
+    active_edges = np.concatenate([active_edges, bresenham_line(vertices[2, :], vertices[0,:])])
     
-    # Sort the edges' pixels firstly by y and then by x
-    active_edges = sorted(active_edges, key=lambda coord: (coord[1], coord[0]))
+    # Sort the edges' pixels by y
+    active_edges = active_edges[np.argsort(active_edges[:, 1])]
 
-    # Scann all the y lines in the calculated range
-    updated_img = img
+    # Initialize the result image
+    updated_img = img.copy()
+    
+    # Scan all the y lines in the calculated range
     for y in range(ymin, ymax, 1):
         # Move all the points with the same y into the current edges list
-        current_edges = []
-        while active_edges[0][1] == y:
-            x, _ = active_edges.pop(0)
-            updated_img[x][y] = flat_color
-            current_edges.append(x)
+        current_edges = active_edges[active_edges[:, 1] == y][:, 0]
 
-        # Skip for the vertex scanning line
-        if len(current_edges) == 1:
+        # Skip the lines with only one point (vertex)
+        if len(current_edges) <= 1:
             x = current_edges[0]
             updated_img[x][y] = flat_color
             continue
         
-        # Fill all the pixels in the x scanning range
-        for x in range(current_edges[0], current_edges[-1], 1):
+        # Color in every pixel in the x scanning line
+        xmin, xmax = np.min(current_edges), np.max(current_edges)
+        for x in range(xmin, xmax):
             updated_img[x][y] = flat_color
     return updated_img
 
 # Example usage
 #M = 100
 #N = 100
-#img = [[[0.99 for i in range(3)] for i in range(N)] for k in range(M)]
+#img = [[[1 for i in range(3)] for i in range(N)] for k in range(M)]
 #vertices = [[0, 0], [999, 999], [0, 999]]
 # vcolors = [[0.9, 0, 0], [0.9, 0, 0], [0.9, 0, 0]]
 
