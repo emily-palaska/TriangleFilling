@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from f_shading import f_shading
 from g_shading import g_shading
@@ -19,30 +18,19 @@ def render_img(faces, vertices, vcolors, depth, shading):
     faces = faces[sorted_depth_indexes]
     
     # Color every triangle
-    for t in faces: 
-        current_vertices = vertices[t]
-        current_colors = vcolors[t]
-        if shading == 'f':
+    if shading == 'f':
+        for t in faces: 
+            current_vertices = vertices[t]
+            current_colors = vcolors[t]
             img = f_shading(img, current_vertices, current_colors)
-        elif shading == 'g':
+    elif shading == 'g':
+        for t in faces:
+            current_vertices= vertices[t]
+            current_colors = vcolors[t]
             img = g_shading(img, current_vertices, current_colors)
-        else:
-            raise ValueError("Invalid shading. Value should be 'f' or 'g'.")
+    else:
+        raise ValueError("Invalid shading. Value should be 'f' or 'g'.")
     return img
 
-# Loadthe hw1 file
-data = np.load('hw1.npy', allow_pickle=True).item()
 
-# Export the needed data to tables
-faces = data['faces']
-vertices = data['vertices']
-vcolors = data['vcolors']
-depth = data['depth']
-
-# Perform the rendering
-img = render_img(faces, vertices, vcolors, depth, 'f')
-
-# Show and save the results
-plt.imshow(img)
-plt.show()
 
