@@ -1,4 +1,3 @@
-import random
 import matplotlib.pyplot as plt
 import numpy as np
 from f_shading import f_shading
@@ -29,20 +28,21 @@ def render_img(faces, vertices, vcolors, depth, shading):
             img = g_shading(img, current_vertices, current_colors)
         else:
             raise ValueError("Invalid shading. Value should be 'f' or 'g'.")
-
     return img
 
-
-
-# Example data
+# Loadthe hw1 file
 data = np.load('hw1.npy', allow_pickle=True).item()
+
+# Export the needed data to tables
 faces = data['faces']
 vertices = data['vertices']
 vcolors = data['vcolors']
 depth = data['depth']
-#shading = data['shading']
 
+# Perform the rendering
 img = render_img(faces, vertices, vcolors, depth, 'f')
+
+# Show and save the results
 plt.imshow(img)
 plt.show()
 

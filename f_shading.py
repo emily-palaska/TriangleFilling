@@ -74,7 +74,7 @@ def f_shading(img, vertices, vcolors):
         
         # Color in every pixel in the x scanning line
         xmin, xmax = np.min(current_edges), np.max(current_edges)
-        for x in range(xmin, xmax):
+        for x in range(xmin, xmax + 1):
             updated_img[x][y] = flat_color
     return updated_img
 
