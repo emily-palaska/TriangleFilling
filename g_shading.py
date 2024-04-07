@@ -68,9 +68,8 @@ def g_shading(img, vertices, vcolors):
                 updated_img[x][y] = [vector_interp(vertices[i], vertices[j], vcolors[i][c], vcolors[j][c], x, 1) for c in range(3)]
         updated_img[vertices[i][0]][vertices[i][1]] = vcolors[i]  
     
-    # Sort the vertices and edges firstly by y
+    # Concatenate the edges
     active_edges = np.concatenate(edges)
-    active_edges = active_edges[np.argsort(active_edges[:, 1])]
     
     # Scan all the y lines in the calculated range
     for y in range(ymin, ymax):
